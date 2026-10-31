@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student portal · Classroom</title>
+    <link rel="stylesheet" href="/home.css">
+    <script src="/home.js" defer></script>
+</head>
+<body>
+    <header class="dashboard-header">
+        <a class="dashboard-brand" href="/">classroom<span>.</span></a>
+        <div class="header-actions"><span><%= student.name %></span><button class="button button-light" type="button" data-logout>Log out</button></div>
+    </header>
+    <main class="dashboard-main">
+        <div class="page-heading"><div><p class="eyebrow">STUDENT PORTAL</p><h1>Your school, at a glance.</h1><p class="muted">Welcome back, <%= student.name %>.</p></div><span class="role-pill">Student</span></div>
+        <section class="summary-grid" aria-label="Student information">
+            <article class="summary-card"><span class="card-label">STUDENT ID</span><strong><%= student.std_id %></strong><small>Your school identifier</small></article>
+            <article class="summary-card"><span class="card-label">DEPARTMENT</span><strong><%= student.department %></strong><small>Your academic department</small></article>
+            <article class="summary-card summary-highlight"><span class="card-label">CURRENT CGPA</span><strong><%= student.cgpa || "Not assigned" %></strong><small><%= student.cgpa ? "Latest result recorded by your administrator" : "Your administrator will add this when it is available" %></small></article>
+        </section>
+        <section class="content-card">
+            <p class="eyebrow">ACCOUNT DETAILS</p>
+            <h2>Your profile</h2>
+            <dl class="profile-list"><div><dt>Name</dt><dd><%= student.name %></dd></div><div><dt>Email</dt><dd><%= student.email %></dd></div><div><dt>Department</dt><dd><%= student.department %></dd></div></dl>
+        </section>
+    </main>
+</body>
+</html>

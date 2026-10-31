@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin dashboard · Classroom</title>
+    <link rel="stylesheet" href="/home.css">
+    <script src="/home.js" defer></script>
+</head>
+<body>
+    <header class="dashboard-header">
+        <a class="dashboard-brand" href="/">classroom<span>.</span></a>
+        <div class="header-actions"><span><%= user.name %></span><button class="button button-light" type="button" data-logout>Log out</button></div>
+    </header>
+    <main class="dashboard-main">
+        <div class="page-heading"><div><p class="eyebrow">ADMIN DASHBOARD</p><h1>User accounts</h1><p class="muted">Review accounts and change their role.</p></div><span class="role-pill"><%= students.length %> accounts</span></div>
+        <section class="content-card">
+            <div class="section-heading"><div><p class="eyebrow">ACCOUNT MANAGEMENT</p><h2>Students and admins</h2></div><p class="muted">Changing your own role is disabled.</p></div>
+            <p class="form-message" data-role-message role="status" aria-live="polite"></p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Name</th><th>ID</th><th>Department</th><th>CGPA</th><th>Role</th><th>Change role</th></tr></thead>
+                    <tbody>
+                    <% if (students.length === 0) { %>
+                        <tr><td class="empty-state" colspan="6">No user accounts were found.</td></tr>
+                    <% } %>
+                    <% students.forEach((student) => { %>
+                        <tr>
+                            <td><strong><%= student.name %></strong><small><%= student.email %></small></td>
+                            <td><%= student.std_id %></td>
+                            <td><%= student.department %></td>
+                            <td><%= student.role === "STUDENT" ? (student.cgpa || "Not assigned") : "—" %></td>
+                            <td><%= student.role %></td>
+                            <td>
+                                <form class="role-change-form" data-role-change="<%= student.id %>">
+                                    <select name="role" aria-label="Role for <%= student.name %>" <%= student.id === user.id ? "disabled" : "" %>>
+                                        <option value="STUDENT" <%= student.role === "STUDENT" ? "selected" : "" %>>Student</option>
+                                        <option value="ADMIN" <%= student.role === "ADMIN" ? "selected" : "" %>>Admin</option>
+                                    </select>
+                                    <button class="button button-dark button-small" type="submit" <%= student.id === user.id ? "disabled" : "" %>>Save</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

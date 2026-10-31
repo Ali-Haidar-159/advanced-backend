@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super admin dashboard · Classroom</title>
+    <link rel="stylesheet" href="/home.css">
+    <script src="/home.js" defer></script>
+</head>
+<body>
+    <header class="dashboard-header">
+        <a class="dashboard-brand" href="/">classroom<span>.</span></a>
+        <div class="header-actions"><span>Super admin</span><form method="post" action="/super-admin/logout"><button class="button button-light" type="submit">Log out</button></form></div>
+    </header>
+    <main class="dashboard-main">
+        <div class="page-heading"><div><p class="eyebrow">SUPER ADMIN DASHBOARD</p><h1>School accounts</h1><p class="muted">View every student and administrator account.</p></div><span class="role-pill">Super admin</span></div>
+        <section class="summary-grid summary-grid-small">
+            <article class="summary-card"><span class="card-label">ADMINISTRATORS</span><strong><%= admins.length %></strong><small>Accounts with admin access</small></article>
+            <article class="summary-card summary-highlight"><span class="card-label">STUDENTS</span><strong><%= students.length %></strong><small>Student portal accounts</small></article>
+        </section>
+        <section class="content-card">
+            <div class="section-heading"><div><p class="eyebrow">ACCOUNT MANAGEMENT</p><h2>All user accounts</h2></div><p class="muted">Update account details. Leave new password blank to keep the current password.</p></div>
+            <p class="form-message" data-user-edit-message role="status" aria-live="polite"></p>
+            <div class="table-wrap"><table><thead><tr><th>Student/staff ID</th><th>Name</th><th>Email</th><th>Department</th><th>CGPA</th><th>Role</th><th>New password</th><th>Action</th></tr></thead><tbody>
+                <% if (accounts.length === 0) { %><tr><td class="empty-state" colspan="8">No user accounts have signed up yet.</td></tr><% } %>
+                <% accounts.forEach((account) => { %><tr>
+                    <td><input form="edit-user-<%= account.id %>" name="std_id" value="<%= account.std_id %>" required aria-label="ID for <%= account.name %>"></td>
+                    <td><input form="edit-user-<%= account.id %>" name="name" value="<%= account.name %>" required aria-label="Name for <%= account.name %>"></td>
+                    <td><input form="edit-user-<%= account.id %>" name="email" type="email" value="<%= account.email %>" required aria-label="Email for <%= account.name %>"></td>
+                    <td><input form="edit-user-<%= account.id %>" name="department" value="<%= account.department %>" required aria-label="Department for <%= account.name %>"></td>
+                    <td><input form="edit-user-<%= account.id %>" name="cgpa" type="number" min="0" max="4" step="0.01" value="<%= account.cgpa || '' %>" aria-label="CGPA for <%= account.name %>" placeholder="Not assigned"></td>
+                    <td><select form="edit-user-<%= account.id %>" name="role" aria-label="Role for <%= account.name %>">
+                        <option value="STUDENT" <%= account.role === "STUDENT" ? "selected" : "" %>>Student</option>
+                        <option value="ADMIN" <%= account.role === "ADMIN" ? "selected" : "" %>>Admin</option>
+                    </select></td>
+                    <td><input form="edit-user-<%= account.id %>" name="password" type="password" minlength="8" autocomplete="new-password" aria-label="New password for <%= account.name %>" placeholder="Leave blank"></td>
+                    <td><form id="edit-user-<%= account.id %>" class="user-edit-form" data-user-edit="<%= account.id %>">
+                        <button class="button button-dark button-small" type="submit">Save</button>
+                    </form></td>
+                </tr><% }) %>
+            </tbody></table></div>
+        </section>
+    </main>
+</body>
+</html>

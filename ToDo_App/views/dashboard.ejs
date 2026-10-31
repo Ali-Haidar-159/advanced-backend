@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Your Daymark dashboard for planning and organizing your day."
+    />
+    <title>My tasks | Daymark</title>
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  </head>
+  <body>
+    <%
+      const displayName =
+        locals.user && typeof locals.user.name === "string" && locals.user.name.trim()
+          ? locals.user.name.trim()
+          : "Daymark User";
+      const displayEmail =
+        locals.user && typeof locals.user.email === "string" && locals.user.email.trim()
+          ? locals.user.email.trim()
+          : "";
+      const userInitials = displayName
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((part) => part.charAt(0).toUpperCase())
+        .join("");
+      const allTodos = Array.isArray(locals.allTodos) ? locals.allTodos : [];
+      const allTags = Array.isArray(locals.allTags) ? locals.allTags : [];
+      const tagColorClass = (color) => {
+        const supportedColors = ["red", "orange", "green", "blue", "purple", "teal", "gray"];
+        const normalizedColor = typeof color === "string" ? color.toLowerCase() : "";
+        return supportedColors.includes(normalizedColor) ? normalizedColor : "gray";
+      };
+    %>
+    <div class="dashboard-shell">
+      <aside class="sidebar" aria-label="Main sidebar">
+        <a class="brand" href="/" aria-label="Daymark home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path
+                d="M8 16.5 13.2 22 24 10"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+          <span>daymark</span>
+        </a>
+
+        <div class="account-card">
+          <div class="avatar" aria-hidden="true"><%= userInitials %></div>
+          <div class="account-copy">
+            <p class="account-name"><%= displayName %></p>
+            <p class="account-email"><%= displayEmail %></p>
+          </div>
+          <button class="more-button" type="button" aria-label="More account options">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <circle cx="4" cy="10" r="1.4" />
+              <circle cx="10" cy="10" r="1.4" />
+              <circle cx="16" cy="10" r="1.4" />
+            </svg>
+          </button>
+        </div>
+
+        <button class="create-button" type="button" data-open-modal>
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path
+              d="M10 4v12M4 10h12"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+          <span>Create todo</span>
+          <span class="create-shortcut">+</span>
+        </button>
+
+        <nav class="side-nav" aria-label="Todo navigation">
+          <p class="nav-label">WORKSPACE</p>
+          <a class="nav-item is-active" href="#my-tasks" aria-current="page">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="M5.5 3.5h9A1.5 1.5 0 0 1 16 5v11.5l-2.6-1.6-2.9 1.6-2.9-1.6L5 16.5V5a1.5 1.5 0 0 1 .5-1.5Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M8 7.5h4.5M8 10.5h4.5"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span>My tasks</span>
+            <span class="nav-count" data-todo-count><%= allTodos.length %></span>
+          </a>
+
+          <p class="nav-label tag-nav-label">YOUR TAGS</p>
+          <% allTags.forEach((tag) => { %>
+            <a class="nav-item tag-nav-item" href="#all-tasks">
+              <span class="tag-dot tag-dot--<%= tagColorClass(tag.color) %>"></span>
+              <span><%= tag.name %></span>
+            </a>
+          <% }) %>
+        </nav>
+
+        <a class="logout-button" href="/auth/logout">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path
+              d="M8 4H5.5A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8m3-3 3-3-3-3m3 3H7"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>Log out</span>
+        </a>
+      </aside>
+
+      <main class="main-content" id="my-tasks">
+        <header class="topbar">
+          <div class="breadcrumb">
+            <span>Workspace</span>
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path
+                d="m6 3.5 4.5 4.5L6 12.5"
+                stroke="currentColor"
+                stroke-width="1.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <strong>My tasks</strong>
+          </div>
+          <p class="topbar-date">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <rect
+                x="3.25"
+                y="4.25"
+                width="13.5"
+                height="12.5"
+                rx="2"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path
+                d="M6.5 2.75v3M13.5 2.75v3M3.5 8h13"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+            Friday, October 30
+          </p>
+        </header>
+
+        <section class="content-wrap" aria-labelledby="page-title">
+          <div class="page-heading">
+            <div>
+              <p class="greeting">A FRESH PAGE, A GOOD DAY</p>
+              <h1 id="page-title">Your tasks</h1>
+              <p class="page-subtitle">A little progress adds up. Let's make it count.</p>
+            </div>
+            <button class="heading-create-button" type="button" data-open-modal>
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path
+                  d="M10 4v12M4 10h12"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <span>New todo</span>
+            </button>
+          </div>
+
+          <div class="list-toolbar">
+            <label class="search-field">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <circle cx="8.8" cy="8.8" r="5.8" stroke="currentColor" stroke-width="1.5" />
+                <path
+                  d="m13.2 13.2 3.3 3.3"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <span class="visually-hidden">Search todos</span>
+              <input type="search" placeholder="Search tasks..." />
+              <span class="search-shortcut">⌘ K</span>
+            </label>
+          </div>
+
+          <section class="task-section" aria-labelledby="all-tasks-heading" id="all-tasks">
+            <div class="section-heading">
+              <div class="section-title-group">
+                <span class="section-indicator"></span>
+                <h2 id="all-tasks-heading">All tasks</h2>
+                <span class="section-count" data-todo-count><%= allTodos.length %></span>
+              </div>
+            </div>
+
+            <div class="task-list">
+              <p class="todo-description" data-empty-todos <%= allTodos.length ? "hidden" : "" %>>
+                You don't have any todos yet. Create one to get started.
+              </p>
+              <% allTodos.forEach((todo) => { %>
+                <article
+                  class="todo-card"
+                  data-todo-card
+                  data-todo-id="<%= todo.id %>"
+                  tabindex="0"
+                  role="group"
+                  aria-label="Todo: <%= todo.title %>. Press Enter to view details."
+                >
+                  <span class="todo-check" aria-label="Not completed"></span>
+                  <div class="todo-main">
+                    <h3 class="todo-title"><%= todo.title %></h3>
+                    <p class="todo-description"><%= todo.description %></p>
+                  </div>
+                  <div class="todo-tags">
+                    <% (todo.todoTags || []).forEach(({ tag }) => { %>
+                      <span class="todo-tag todo-tag--<%= tagColorClass(tag.color) %>"><%= tag.name %></span>
+                    <% }) %>
+                  </div>
+                  <button
+                    class="todo-delete"
+                    type="button"
+                    data-delete-todo
+                    aria-label="Delete <%= todo.title %>"
+                  >
+                    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                      <path
+                        d="M4.5 6h11m-9.5 0 .6 10h6.8l.6-10M8 6V4.5h4V6m-3 3v4m2-4v4"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </button>
+                </article>
+              <% }) %>
+            </div>
+          </section>
+
+          <p class="dashboard-footer">Small steps still move you forward. <span>✳</span></p>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" data-modal-backdrop hidden>
+      <section
+        class="todo-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+        data-todo-modal
+      >
+        <div class="modal-header">
+          <div>
+            <p class="modal-eyebrow">MAKE A LITTLE PLAN</p>
+            <h2 id="modal-title">Create a todo</h2>
+            <p id="modal-description">Get it out of your head and onto your list.</p>
+          </div>
+          <button class="modal-close" type="button" aria-label="Close dialog" data-close-modal>
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="m6 6 8 8m0-8-8 8"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <form class="todo-form" action="/todos/create" method="post" data-todo-form>
+          <label class="modal-field">
+            <span>Todo title <span class="required-mark">*</span></span>
+            <input type="text" name="title" placeholder="What needs to get done?" required />
+          </label>
+
+          <label class="modal-field">
+            <span>Description <span class="required-mark">*</span></span>
+            <textarea
+              name="description"
+              rows="3"
+              placeholder="Add a few details..."
+              required
+            ></textarea>
+          </label>
+
+          <fieldset class="tag-picker" aria-describedby="tag-selection-error">
+            <legend>Choose one or more tags <span class="required-mark">*</span></legend>
+            <label class="tag-choice">
+              <input type="checkbox" value="critical" data-tag-name="critical" data-tag-color="red" />
+              <span class="todo-tag todo-tag--red">critical</span>
+            </label>
+            <label class="tag-choice">
+              <input type="checkbox" value="important" data-tag-name="important" data-tag-color="orange" />
+              <span class="todo-tag todo-tag--orange">important</span>
+            </label>
+            <label class="tag-choice">
+              <input type="checkbox" value="low-priority" data-tag-name="low-priority" data-tag-color="green" />
+              <span class="todo-tag todo-tag--green">low-priority</span>
+            </label>
+            <label class="tag-choice">
+              <input type="checkbox" value="office" data-tag-name="office" data-tag-color="blue" />
+              <span class="todo-tag todo-tag--blue">office</span>
+            </label>
+            <label class="tag-choice">
+              <input type="checkbox" value="home" data-tag-name="home" data-tag-color="purple" />
+              <span class="todo-tag todo-tag--purple">home</span>
+            </label>
+            <label class="tag-choice">
+              <input type="checkbox" value="team" data-tag-name="team" data-tag-color="teal" />
+              <span class="todo-tag todo-tag--teal">team</span>
+            </label>
+            <label class="tag-choice">
+              <input type="checkbox" value="only me" data-tag-name="only me" data-tag-color="gray" />
+              <span class="todo-tag todo-tag--gray">only me</span>
+            </label>
+            <p class="tag-selection-error" id="tag-selection-error" role="alert" hidden>
+              Select at least one tag.
+            </p>
+          </fieldset>
+
+          <div class="modal-actions">
+            <button class="cancel-button" type="button" data-close-modal>Cancel</button>
+            <button class="save-button" type="submit">Create todo</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" data-details-backdrop hidden>
+      <section
+        class="todo-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="details-title"
+        aria-describedby="details-description"
+        data-details-modal
+      >
+        <div class="modal-header">
+          <div>
+            <p class="modal-eyebrow">TODO DETAILS</p>
+            <h2 id="details-title" data-details-title></h2>
+            <p id="details-description" data-details-description></p>
+          </div>
+          <button class="modal-close" type="button" aria-label="Close todo details" data-close-details>
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="m6 6 8 8m0-8-8 8"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="todo-tags" data-details-tags></div>
+        <p class="todo-description" role="status" data-details-status hidden></p>
+      </section>
+    </div>
+
+    <script src="/js/dashboard.js" defer></script>
+  </body>
+</html>
