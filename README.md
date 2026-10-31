@@ -25,7 +25,7 @@ Advanced-Backend/
 └── ToDo_App/
 ```
 
-## 📚 Topics Covered
+##  Topics Covered
 
 ### 1. Middleware
 - Understanding Express.js middleware.
@@ -82,7 +82,7 @@ Advanced-Backend/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Advanced-Backend.git
+git clone https://github.com/Ali-Haidar-159/advanced-backend
 ```
 
 ### 2. Navigate to the Project Directory
