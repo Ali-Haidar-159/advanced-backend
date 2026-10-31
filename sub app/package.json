@@ -1,0 +1,11 @@
+{
+  "name": "sub app",
+  "packageManager": "yarn@4.6.0",
+  "dependencies": {
+    "express": "^5.3.0",
+    "nodemon": "^3.1.14"
+  },
+  "scripts": {
+    "start": "nodemon index.js"
+  }
+}
